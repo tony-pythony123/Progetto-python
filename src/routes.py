@@ -114,3 +114,10 @@ def register_routes(app):
             "error": "Endpoint non trovato",
             "status": 404
         }), 404
+    
+    @app.errorhandler(405)
+    def method_not_allowed(e):
+        return jsonify({
+            "error": "Metodo non consentito per questo endpoint",
+            "status": 405
+        }), 405
