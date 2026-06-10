@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from src.handlers.handlers import get_riders, get_riders_by_vehicle, create_review, update_review_comment
+from src.handlers.handlers import get_riders, get_riders_by_vehicle, create_review, update_review_comment, remove_rider
 
 def register_routes(app):
 
@@ -39,3 +39,15 @@ def register_routes(app):
             return jsonify({"error": "Review not found"}), 404
 
         return jsonify(review), 200
+    
+    @app.route("/riders/<int:id>", methods=["DELETE"])
+    def delete_rider(id):
+        rider = delete_rider(id)
+
+        if rider is None:
+            return jsonify({"Error": "rider not found"}), 404
+        return jsonify ({
+            "message":"Rider deleted succesfully",
+            "deleted":rider
+        }), 200
+        

@@ -78,3 +78,27 @@ def update_review_comment(id, comment):
     finally:
         cur.close()
         conn.close()
+
+def remove_rider(id):
+    conn=get_connection()
+    try:
+        cur=conn.cursor()
+        cur.execute(
+            """
+            DELETE FROM riders
+            WHERE id = %s
+            RETURNING *;
+            """,
+            (id,)
+        )
+        row = cur.fetchone()
+        conn.commit()
+
+        if row is None:
+            return None
+
+        return rows_to_dict(cur, [row])[0]
+
+    finally:
+        cur.close()
+        conn.close()
