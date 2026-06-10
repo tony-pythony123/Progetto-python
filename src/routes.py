@@ -1,7 +1,6 @@
 from flask import request, jsonify
-from src.handlers.product_handler import get_riders, get_riders_by_vehicle, post_review
+from src.handlers.handlers import get_riders, get_riders_by_vehicle, create_review
 
-# Scusate questo è un test per alberto
 def register_routes(app):
 
     @app.route("/riders")

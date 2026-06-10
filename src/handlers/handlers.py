@@ -2,7 +2,7 @@ from data.db import get_connection
 from src.utils import rows_to_dict
 
 
-def get_all_riders():
+def get_riders():
     conn = get_connection()
     try:
         cur = conn.cursor()
@@ -33,7 +33,6 @@ def create_review(id, rider_id, customer_name, rating, comment):
     conn = get_connection()
     try:
         cur = conn.cursor()
-
         cur.execute(
             """
             INSERT INTO reviews (
@@ -48,12 +47,9 @@ def create_review(id, rider_id, customer_name, rating, comment):
             """,
             (id, rider_id, customer_name, rating, comment)
         )
-
         row = cur.fetchone()
         conn.commit()
-
         return rows_to_dict(cur, [row])[0]
-
     finally:
         cur.close()
         conn.close()
