@@ -42,7 +42,7 @@ def register_routes(app):
     
     @app.route("/riders/<int:id>", methods=["DELETE"])
     def delete_rider(id):
-        rider = delete_rider(id)
+        rider = remove_rider(id)
 
         if rider is None:
             return jsonify({"Error": "rider not found"}), 404
