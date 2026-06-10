@@ -108,6 +108,9 @@ def register_routes(app):
         except Exception as e:
             return jsonify({"Error": str(e)}), 500
     
-    @app.errorhandler(ValueError)
-    def handle_value_error(e):
-        return jsonify({"error": str(e)}), 400
+    @app.errorhandler(404)
+    def not_found(e):
+        return jsonify({
+            "error": "Endpoint non trovato",
+            "status": 404
+        }), 404
