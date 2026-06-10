@@ -6,19 +6,11 @@ def get_riders():
     conn = get_connection()
     try:
         cur = conn.cursor()
-        try:
-            cur.execute("SELECT * FROM riders;")
-            rows = cur.fetchall()
-            return rows_to_dict(cur, rows)
-        except Exception as e:
-            print("Error in get_riders:", e)
-            return None
-        finally:
-            cur.close()
-    except Exception as e:
-        print("Connection error in get_riders:", e)
-        return None
+        cur.execute("SELECT * FROM riders;")
+        rows = cur.fetchall()
+        return rows_to_dict(cur, rows)
     finally:
+        cur.close()
         conn.close()
 
 
@@ -26,57 +18,41 @@ def get_riders_by_vehicle(vehicle):
     conn = get_connection()
     try:
         cur = conn.cursor()
-        try:
-            cur.execute(
-                "SELECT * FROM riders WHERE vehicle = %s;",
-                (vehicle,)
-            )
-            rows = cur.fetchall()
-            return rows_to_dict(cur, rows)
-        except Exception as e:
-            print("Error in get_riders_by_vehicle:", e)
-            return None
-        finally:
-            cur.close()
-    except Exception as e:
-        print("Connection error in get_riders_by_vehicle:", e)
-        return None
+        cur.execute(
+            "SELECT * FROM riders WHERE vehicle = %s;",
+            (vehicle,)
+        )
+        rows = cur.fetchall()
+        return rows_to_dict(cur, rows)
     finally:
+        cur.close()
         conn.close()
 
 
-def create_review(id, rider_id, customer_name, rating, comment):
+def create_review(rider_id, customer_name, rating, comment):
+    if rating < 1 or rating > 5:
+        raise ValueError("Rating must be between 1 and 5")
     conn = get_connection()
     try:
         cur = conn.cursor()
-        try:
-            cur.execute(
-                """
-                INSERT INTO reviews (
-                    id,
-                    rider_id,
-                    customer_name,
-                    rating,
-                    comment
-                )
-                VALUES (%s, %s, %s, %s, %s)
-                RETURNING *;
-                """,
-                (id, rider_id, customer_name, rating, comment)
+        cur.execute(
+            """
+            INSERT INTO reviews (
+                rider_id,
+                customer_name,
+                rating,
+                comment
             )
-            row = cur.fetchone()
-            conn.commit()
-            return rows_to_dict(cur, [row])[0]
-        except Exception as e:
-            print("Error in create_review:", e)
-            conn.rollback()
-            return None
-        finally:
-            cur.close()
-    except Exception as e:
-        print("Connection error in create_review:", e)
-        return None
+            VALUES (%s, %s, %s, %s)
+            RETURNING *;
+            """,
+            (rider_id, customer_name, rating, comment)
+        )
+        row = cur.fetchone()
+        conn.commit()
+        return rows_to_dict(cur, [row])[0]
     finally:
+        cur.close()
         conn.close()
 
 
@@ -84,88 +60,62 @@ def update_review_comment(id, comment):
     conn = get_connection()
     try:
         cur = conn.cursor()
-        try:
-            cur.execute(
-                """
-                UPDATE reviews
-                SET comment = %s
-                WHERE id = %s
-                RETURNING *;
-                """,
-                (comment, id)
-            )
-            row = cur.fetchone()
-            conn.commit()
-            if row is None:
-                return None
-            return rows_to_dict(cur, [row])[0]
-        except Exception as e:
-            print("Error in update_review_comment:", e)
-            conn.rollback()
+        cur.execute(
+            """
+            UPDATE reviews
+            SET comment = %s
+            WHERE id = %s
+            RETURNING *;
+            """,
+            (comment, id)
+        )
+        row = cur.fetchone()
+        conn.commit()
+        if row is None:
             return None
-        finally:
-            cur.close()
-    except Exception as e:
-        print("Connection error in update_review_comment:", e)
-        return None
+        return rows_to_dict(cur, [row])[0]
     finally:
+        cur.close()
         conn.close()
+
 
 def remove_rider(id):
     conn = get_connection()
     try:
         cur = conn.cursor()
-        try:
-            cur.execute(
-                """
-                DELETE FROM riders
-                WHERE id = %s
-                RETURNING *;
-                """,
-                (id,)
-            )
-            row = cur.fetchone()
-            conn.commit()
-            if row is None:
-                return None
-            return rows_to_dict(cur, [row])[0]
-        except Exception as e:
-            print("Error in remove_rider:", e)
-            conn.rollback()
+        cur.execute(
+            """
+            DELETE FROM riders
+            WHERE id = %s
+            RETURNING *;
+            """,
+            (id,)
+        )
+        row = cur.fetchone()
+        conn.commit()
+        if row is None:
             return None
-        finally:
-            cur.close()
-    except Exception as e:
-        print("Connection error in remove_rider:", e)
-        return None
+        return rows_to_dict(cur, [row])[0]
     finally:
-        conn.close()
+        cur.close()
+        conn.close() 
+
 
 def average_rating(rider_id):
     conn = get_connection()
     try:
         cur = conn.cursor()
-        try:
-            cur.execute("""
-                SELECT D.name, R.rider_id, ROUND(AVG(R.rating)::numeric, 2) AS avg_rating
-                FROM reviews AS R
-                JOIN riders AS D ON R.rider_id = D.id
-                WHERE R.rider_id = %s
-                GROUP BY D.name, R.rider_id
-            """, (rider_id,))
-            row = cur.fetchone()
-            if row is None:
-                return None
-            print("DEBUG ROW:", row)
-            print("DEBUG TYPE:", type(row))
-            return rows_to_dict(cur, [row])[0]
-        except Exception as e:
-            print("Error in average_rating:", e)
+        cur.execute("""
+            SELECT D.name, R.rider_id, ROUND(AVG(R.rating)::numeric, 2) AS avg_rating
+            FROM reviews AS R
+            JOIN riders AS D ON R.rider_id = D.id
+            WHERE R.rider_id = %s
+            GROUP BY D.name, R.rider_id
+        """, (rider_id,))
+        row = cur.fetchone()
+        if row is None:
             return None
-        finally:
-            cur.close()
-    except Exception as e:
-        print("Connection error in average_rating:", e)
-        return None
+        return rows_to_dict(cur, [row])[0]
     finally:
+        cur.close()
         conn.close()
