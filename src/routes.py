@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from src.handlers.handlers import get_riders, get_riders_by_vehicle, create_review
+from src.handlers.handlers import get_riders, get_riders_by_vehicle, create_review, update_review_comment
 
 def register_routes(app):
 
@@ -25,3 +25,17 @@ def register_routes(app):
         )
     
         return jsonify(review), 201
+    
+    @app.route("/reviews/<int:id>", methods=["PUT"])
+    def update_review(id):
+        data = request.get_json()
+
+        review = update_review_comment(
+            id,
+            data.get("comment")
+        )
+
+        if review is None:
+            return jsonify({"error": "Review not found"}), 404
+
+        return jsonify(review), 200

@@ -7,5 +7,5 @@ def get_connection():
         dbname="db_gestione-consegne",
         user=os.getenv("DB_USER", "postgres"),
         password=os.getenv("DB_PASSWORD", "Bari2025"),
-        port=8082
+        port=os.getenv("DB_PORT", 8082)
     )
