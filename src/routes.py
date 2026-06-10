@@ -51,6 +51,11 @@ def register_routes(app):
             "deleted": rider
         }), 200
     
-    @app.route("/media", methods=["GET"])
-    def media():
-        return jsonify(average_rating())
+    @app.route("/media/<int:rider_id>", methods=["GET"])
+    def media(rider_id):
+        result = average_rating(rider_id)
+    
+        if result is None:
+            return jsonify({"error": "Rider not found or has no reviews"}), 404
+    
+        return jsonify(result)

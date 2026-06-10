@@ -141,7 +141,7 @@ def remove_rider(id):
     finally:
         conn.close()
 
-def average_rating():
+def average_rating(rider_id):
     conn = get_connection()
     try:
         cur = conn.cursor()
@@ -150,15 +150,15 @@ def average_rating():
                 SELECT D.name, R.rider_id, ROUND(AVG(R.rating)::numeric, 2) AS avg_rating
                 FROM reviews AS R
                 JOIN riders AS D ON R.rider_id = D.id
+                WHERE R.rider_id = %s
                 GROUP BY D.name, R.rider_id
-            """)
-
-            rows = cur.fetchall()
-
-            print("DEBUG ROWS:", rows)
-            print("DEBUG TYPES:", [type(r) for r in rows])
-
-            return rows_to_dict(cur, rows)
+            """, (rider_id,))
+            row = cur.fetchone()
+            if row is None:
+                return None
+            print("DEBUG ROW:", row)
+            print("DEBUG TYPE:", type(row))
+            return rows_to_dict(cur, [row])[0]
         except Exception as e:
             print("Error in average_rating:", e)
             return None
