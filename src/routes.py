@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from src.handlers.handlers import get_riders, get_riders_by_vehicle, create_review, update_review_comment, remove_rider, media_consegne
+from src.handlers.handlers import get_riders, get_riders_by_vehicle, create_review, update_review_comment, remove_rider, average_rating
 
 
 def register_routes(app):
@@ -53,4 +53,4 @@ def register_routes(app):
     
     @app.route("/media", methods=["GET"])
     def media():
-        return jsonify(media_consegne())
+        return jsonify(average_rating())
