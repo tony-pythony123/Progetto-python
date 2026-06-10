@@ -1,12 +1,12 @@
 from flask import request, jsonify
-from src.handlers.handlers import get_riders, get_riders_by_vehicle, create_review, update_review_comment, remove_rider
+from src.handlers.handlers import get_riders, get_riders_by_vehicle, create_review, update_review_comment, remove_rider, media_consegne
+
 
 def register_routes(app):
 
     @app.route("/riders")
     def riders():
         return jsonify(get_riders())
-
 
     @app.route("/riders/<vehicle>")
     def riders_by_vehicle(vehicle):
@@ -48,6 +48,9 @@ def register_routes(app):
             return jsonify({"Error": "rider not found"}), 404
         return jsonify ({
             "message":"Rider deleted succesfully",
-            "deleted":rider
+            "deleted": rider
         }), 200
-        
+    
+    @app.route("/media", methods=["GET"])
+    def media():
+        return jsonify(media_consegne())
