@@ -3,7 +3,7 @@ import os
 
 def get_connection():
     return psycopg2.connect(
-        host="localhost",
+        host=os.getenv("DB_HOST", "localhost"),
         dbname="db_gestione-consegne",
         user=os.getenv("DB_USER", "postgres"),
         password=os.getenv("DB_PASSWORD", "Bari2025"),
