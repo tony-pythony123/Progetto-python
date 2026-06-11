@@ -8,6 +8,7 @@ ENV DB_USER="postgres"
 ENV DB_PASSWORD="Bari2025"
 ENV DB_PORT=8082
 ENV PORT=5000
+ENV DB_HOST="host.docker.internal"
 
 COPY requirements.txt .
 
