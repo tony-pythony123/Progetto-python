@@ -30,8 +30,6 @@ def get_riders_by_vehicle(vehicle):
 
 
 def create_review(rider_id, customer_name, rating, comment):
-    if rating < 1 or rating > 5:
-        raise ValueError("Il rating deve essere tra 1 e 5")
     conn = get_connection()
     try:
         cur = conn.cursor()
