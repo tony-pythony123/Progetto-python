@@ -8,10 +8,23 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mydb
     ports:
-      - "8082:5000"
+      - "8082:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data 
-      - ../data/scripts.py:/docker-entrypoint-initdb.d/scripts.py
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build: ..
+    container_name: flask_app
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: mydb
 
 volumes:
   db_data:
