@@ -60,7 +60,7 @@ def update_review(id):
             comment.strip()
         )
         if review is None:
-            return jsonify({"error": "Review not found"}), 404
+            return jsonify({"error": "Review non trovata"}), 404
         return jsonify(review), 200
     except Exception as e:
         return jsonify({"Error": str(e)}), 500
@@ -70,9 +70,9 @@ def delete_rider(id):
     try:
         rider = remove_rider(id)
         if rider is None:
-            return jsonify({"Error": "rider not found"}), 404
+            return jsonify({"Error": "rider non trovato"}), 404
         return jsonify({
-            "message": "Rider deleted successfully",
+            "message": "Rider eliminato con successo",
             "deleted": rider
         }), 200
     except Exception as e:
@@ -83,7 +83,7 @@ def media(rider_id):
     try:
         result = average_rating(rider_id)
         if result is None:
-            return jsonify({"error": "Rider not found or has no reviews"}), 404
+            return jsonify({"error": "Rider non trovato o non ha review"}), 404
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"Error": str(e)}), 500
