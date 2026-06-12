@@ -87,17 +87,3 @@ def media(rider_id):
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"Error": str(e)}), 500
-
-@consegne_bp.errorhandler(404)
-def not_found(e):
-    return jsonify({
-        "error": "Endpoint non trovato",
-        "status": 404
-    }), 404
-
-@consegne_bp.errorhandler(405)
-def method_not_allowed(e):
-    return jsonify({
-        "error": "Metodo non consentito per questo endpoint",
-        "status": 405
-    }), 405
