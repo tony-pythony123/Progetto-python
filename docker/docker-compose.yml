@@ -5,10 +5,11 @@ services:
       dockerfile: docker/Dockerfile
     container_name: flask_app
     ports:
-      - "8082:8082"
+      - "5000:5000"
     environment:
       DB_HOST: host.docker.internal
       DB_PORT: 8082
       DB_USER: postgres
       DB_PASSWORD: Bari2025
       DB_NAME: db_gestione-consegne
+      PORT: 5000
